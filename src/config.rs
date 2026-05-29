@@ -117,8 +117,25 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+// Valency Lumen: build-time customization.
+// Override via env vars RENDEZVOUS_SERVER and RS_PUB_KEY (CI workflow ja faz isso).
+// Mantemos os defaults do RustDesk como fallback para builds locais sem env.
+const fn lumen_rendezvous_server() -> &'static str {
+    match option_env!("RENDEZVOUS_SERVER") {
+        Some(s) => s,
+        None => "rs-ny.rustdesk.com",
+    }
+}
+
+const fn lumen_rs_pub_key() -> &'static str {
+    match option_env!("RS_PUB_KEY") {
+        Some(s) => s,
+        None => "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=",
+    }
+}
+
+pub const RENDEZVOUS_SERVERS: &[&str] = &[lumen_rendezvous_server()];
+pub const RS_PUB_KEY: &str = lumen_rs_pub_key();
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
